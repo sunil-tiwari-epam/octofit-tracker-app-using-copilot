@@ -1,21 +1,25 @@
 import { Router } from 'express';
 import type { Request, Response } from 'express';
+import Activity from '../models/activity.ts';
 
 const router = Router();
 
-const activities = [
-  { id: 'act-1', userId: '1', type: 'run', distanceKm: 5, durationMinutes: 30 },
-  { id: 'act-2', userId: '2', type: 'cycle', distanceKm: 20, durationMinutes: 60 },
-];
-
-router.get('/', (req: Request, res: Response) => {
-  res.json({ data: activities });
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const activities = await Activity.find().populate('user', 'name email');
+    res.json({ data: activities });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to load activities' });
+  }
 });
 
-router.post('/', (req: Request, res: Response) => {
-  const activity = { id: `act-${Date.now()}`, ...req.body };
-  activities.push(activity);
-  res.status(201).json({ data: activity });
+router.post('/', async (req: Request, res: Response) => {
+  try {
+    const activity = await Activity.create(req.body);
+    res.status(201).json({ data: activity });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create activity' });
+  }
 });
 
 export default router;

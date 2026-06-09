@@ -3,11 +3,11 @@ import type { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import usersRouter from './routes/users.js';
-import teamsRouter from './routes/teams.js';
-import activitiesRouter from './routes/activities.js';
-import leaderboardRouter from './routes/leaderboard.js';
-import workoutsRouter from './routes/workouts.js';
+import usersRouter from './routes/users.ts';
+import teamsRouter from './routes/teams.ts';
+import activitiesRouter from './routes/activities.ts';
+import leaderboardRouter from './routes/leaderboard.ts';
+import workoutsRouter from './routes/workouts.ts';
 
 dotenv.config();
 
@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit-tracker';
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db';
     await mongoose.connect(mongoUri);
     console.log('✓ MongoDB connected successfully');
   } catch (error) {
