@@ -7,6 +7,7 @@ on:
     paths:
       - "octofit-tracker/frontend/package.json"
       - "octofit-tracker/backend/package.json"
+      - ".github/workflows/2-application-initial-setup.yml"
 
 permissions:
   contents: read
