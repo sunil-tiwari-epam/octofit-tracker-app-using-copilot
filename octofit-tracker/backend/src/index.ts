@@ -3,15 +3,23 @@ import type { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import usersRouter from './routes/users.js';
+import teamsRouter from './routes/teams.js';
+import activitiesRouter from './routes/activities.js';
+import leaderboardRouter from './routes/leaderboard.js';
+import workoutsRouter from './routes/workouts.js';
 
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 8000;
+const port = Number(process.env.PORT || 8000);
+const codespaceName = process.env.CODESPACE_NAME;
+const codespaceUrl = codespaceName ? `https://${codespaceName}-8000.githubpreview.dev` : undefined;
+const allowedOrigin = process.env.CORS_ORIGIN || codespaceUrl || 'http://localhost:5173';
 
 // Middleware
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: allowedOrigin,
   credentials: true,
 }));
 app.use(express.json());
@@ -29,14 +37,25 @@ const connectDB = async () => {
   }
 };
 
-// Basic Routes
+// Health & Info
 app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'OctoFit Tracker API' });
+  res.json({
+    message: 'OctoFit Tracker API',
+    port,
+    codespaceUrl: codespaceUrl || null,
+  });
 });
 
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
+// API Routes
+app.use('/api/users', usersRouter);
+app.use('/api/teams', teamsRouter);
+app.use('/api/activities', activitiesRouter);
+app.use('/api/leaderboard', leaderboardRouter);
+app.use('/api/workouts', workoutsRouter);
 
 // Start Server
 const startServer = async () => {
@@ -44,6 +63,9 @@ const startServer = async () => {
     await connectDB();
     app.listen(port, () => {
       console.log(`Server running on http://localhost:${port}`);
+      if (codespaceUrl) {
+        console.log(`Codespaces preview URL: ${codespaceUrl}`);
+      }
     });
   } catch (error) {
     console.error('Failed to start server:', error);
