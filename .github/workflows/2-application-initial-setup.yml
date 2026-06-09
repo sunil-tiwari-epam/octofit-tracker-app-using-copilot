@@ -62,6 +62,17 @@ jobs:
       - name: Check React 19 dependency
         id: check-react-19
         continue-on-error: true
+        # DEBUG: print package.json to help diagnose keyphrase checker failures
+      - name: Dump frontend package.json (debug)
+        run: |
+          echo '--- frontend/package.json ---'
+          if [ -f octofit-tracker/frontend/package.json ]; then
+            sed -n '1,200p' octofit-tracker/frontend/package.json
+          else
+            echo 'MISSING: octofit-tracker/frontend/package.json'
+          fi
+        shell: bash
+        continue-on-error: true
         run: |
           node -e "
           try {
