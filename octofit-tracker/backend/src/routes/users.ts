@@ -1,11 +1,20 @@
 import { Router } from 'express';
 import type { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import User from '../models/user.ts';
 
 const router = Router();
 
+const fallbackUsers = [
+  { id: '1', name: 'Alice Morgan', email: 'alice@octofit.com', role: 'member' },
+  { id: '2', name: 'Bob Chen', email: 'bob@octofit.com', role: 'coach' },
+];
+
 router.get('/', async (req: Request, res: Response) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.json({ data: fallbackUsers });
+    }
     const users = await User.find().populate('team', 'name');
     res.json({ data: users });
   } catch (error) {

@@ -14,7 +14,8 @@ dotenv.config();
 const app: Express = express();
 const port = Number(process.env.PORT || 8000);
 const codespaceName = process.env.CODESPACE_NAME;
-const codespaceUrl = codespaceName ? `https://${codespaceName}-8000.githubpreview.dev` : undefined;
+const codespaceUrl = codespaceName ? `https://${codespaceName}-8000.app.github.dev` : undefined;
+const apiBaseUrl = codespaceUrl || `http://localhost:${port}`;
 const allowedOrigin = process.env.CORS_ORIGIN || codespaceUrl || 'http://localhost:5173';
 
 // Middleware
@@ -33,6 +34,7 @@ app.get('/', (req: Request, res: Response) => {
   res.json({
     message: 'OctoFit Tracker API',
     port,
+    apiBaseUrl,
     codespaceUrl: codespaceUrl || null,
   });
 });

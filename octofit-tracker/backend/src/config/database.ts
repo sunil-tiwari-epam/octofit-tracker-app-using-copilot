@@ -8,11 +8,11 @@ export const connectDB = async (): ConnectDBResult => {
   try {
     await mongoose.connect(mongoUri);
     console.log(`✓ MongoDB connected successfully to ${mongoUri}`);
-    return mongoose;
   } catch (error) {
-    console.error('⚠ MongoDB connection failed:', (error as Error).message);
-    throw error;
+    console.warn('⚠ MongoDB connection failed:', (error as Error).message);
+    console.warn('  Continuing without database connection for local development.');
   }
+  return mongoose;
 };
 
 export default mongoose;
