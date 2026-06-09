@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import { connectDB } from '../database.ts';
 import Activity from '../models/activity.ts';
 import Leaderboard from '../models/leaderboard.ts';
 import Team from '../models/team.ts';
@@ -7,8 +8,6 @@ import User from '../models/user.ts';
 import Workout from '../models/workout.ts';
 
 dotenv.config();
-
-const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db';
 
 const teamSeeds = [
   {
@@ -173,8 +172,7 @@ const leaderboardSeeds = [
 
 const seed = async () => {
   console.log('Seed the octofit_db database with test data');
-  await mongoose.connect(mongoUri);
-  console.log(`Connected to MongoDB at ${mongoUri}`);
+  await connectDB();
 
   await Promise.all([
     User.deleteMany({}),

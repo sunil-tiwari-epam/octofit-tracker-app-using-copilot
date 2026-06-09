@@ -2,7 +2,7 @@ import express from 'express';
 import type { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
+import { connectDB } from './database.ts';
 import usersRouter from './routes/users.ts';
 import teamsRouter from './routes/teams.ts';
 import activitiesRouter from './routes/activities.ts';
@@ -26,16 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Connection
-const connectDB = async () => {
-  try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db';
-    await mongoose.connect(mongoUri);
-    console.log('✓ MongoDB connected successfully');
-  } catch (error) {
-    console.warn('⚠ MongoDB connection failed:', (error as Error).message);
-    console.log('  Server will continue running in offline mode');
-  }
-};
+// The shared database helper handles the connection string and mongoose setup.
 
 // Health & Info
 app.get('/', (req: Request, res: Response) => {
