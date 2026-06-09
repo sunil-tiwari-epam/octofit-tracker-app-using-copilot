@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { connectDB } from '../database.ts';
+import { connectDB } from '../config/database.ts';
 import Activity from '../models/activity.ts';
 import Leaderboard from '../models/leaderboard.ts';
 import Team from '../models/team.ts';

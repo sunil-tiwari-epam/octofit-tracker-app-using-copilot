@@ -2,7 +2,7 @@ import express from 'express';
 import type { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { connectDB } from './database.ts';
+import { connectDB } from './config/database.ts';
 import usersRouter from './routes/users.ts';
 import teamsRouter from './routes/teams.ts';
 import activitiesRouter from './routes/activities.ts';
