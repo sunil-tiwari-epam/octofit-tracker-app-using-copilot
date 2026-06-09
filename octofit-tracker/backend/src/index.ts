@@ -1,4 +1,5 @@
-import express, { Express, Request, Response } from 'express';
+import express from 'express';
+import type { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -21,10 +22,10 @@ const connectDB = async () => {
   try {
     const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit-tracker';
     await mongoose.connect(mongoUri);
-    console.log('MongoDB connected successfully');
+    console.log('✓ MongoDB connected successfully');
   } catch (error) {
-    console.error('MongoDB connection error:', error);
-    process.exit(1);
+    console.warn('⚠ MongoDB connection failed:', (error as Error).message);
+    console.log('  Server will continue running in offline mode');
   }
 };
 
