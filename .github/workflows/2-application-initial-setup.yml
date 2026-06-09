@@ -62,13 +62,22 @@ jobs:
       - name: Check React 19 dependency
         id: check-react-19
         continue-on-error: true
-        uses: skills/action-keyphrase-checker@v2.0.0
-        with:
-          text-file: octofit-tracker/frontend/package.json
-          # Match exact substring including trailing comma to avoid false negatives
-          keyphrase: '"react": "^19,'
-          minimum-occurrences: 1
-          case-sensitive: false
+        run: |
+          node -e "
+          try {
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('octofit-tracker/frontend/package.json','utf8'));
+            const v = pkg.dependencies && pkg.dependencies.react;
+            if (!v || !/^\^?19(\.|$)/.test(v)) {
+              console.error('react not at version ^19, found:', v);
+              process.exit(2);
+            }
+            console.log('react dependency OK:', v);
+          } catch (e) {
+            console.error('failed to read package.json', e.message);
+            process.exit(2);
+          }
+          "
 
       - name: Check Express dependency
         id: check-express
