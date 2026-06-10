@@ -1,121 +1,66 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
+import Activities from './components/Activities.jsx'
+import Leaderboard from './components/Leaderboard.jsx'
+import Teams from './components/Teams.jsx'
+import Users from './components/Users.jsx'
+import Workouts from './components/Workouts.jsx'
+
+const codespaceName = import.meta.env.VITE_CODESPACE_NAME?.trim()
+const apiHost = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev`
+  : 'http://localhost:8000'
+
+const navigation = [
+  { path: '/activities', label: 'Activities' },
+  { path: '/leaderboard', label: 'Leaderboard' },
+  { path: '/teams', label: 'Teams' },
+  { path: '/users', label: 'Users' },
+  { path: '/workouts', label: 'Workouts' },
+]
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+    <div className="app-shell">
+      <header className="app-header">
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+          <h1>Octofit Tracker</h1>
+          <p className="subtitle">
+            Use <code>react-router-dom</code> for navigation and connect to the
+            backend via Vite runtime env variables.
           </p>
+          <p className="meta">
+            API host:
+            <strong>{' ' + apiHost}</strong>
+          </p>
+          {!codespaceName && (
+            <p className="warning">
+              VITE_CODESPACE_NAME is not defined. Add it in{' '}
+              <code>.env.local</code> to use GitHub Codespaces URLs.
+            </p>
+          )}
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+        <nav className="app-nav">
+          {navigation.map((nav) => (
+            <Link key={nav.path} to={nav.path} className="nav-link">
+              {nav.label}
+            </Link>
+          ))}
+        </nav>
+      </header>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <main className="app-main">
+        <Routes>
+          <Route path="/" element={<Navigate to="/activities" replace />} />
+          <Route path="/activities" element={<Activities apiHost={apiHost} />} />
+          <Route path="/leaderboard" element={<Leaderboard apiHost={apiHost} />} />
+          <Route path="/teams" element={<Teams apiHost={apiHost} />} />
+          <Route path="/users" element={<Users apiHost={apiHost} />} />
+          <Route path="/workouts" element={<Workouts apiHost={apiHost} />} />
+          <Route path="*" element={<p>Page not found.</p>} />
+        </Routes>
+      </main>
+    </div>
   )
 }
 
