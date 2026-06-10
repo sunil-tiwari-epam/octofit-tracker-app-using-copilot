@@ -7,6 +7,7 @@ on:
     paths:
       - "octofit-tracker/frontend/package.json"
       - "octofit-tracker/backend/package.json"
+      - ".github/workflows/2-application-initial-setup.yml"
 
 permissions:
   contents: read
@@ -62,12 +63,34 @@ jobs:
       - name: Check React 19 dependency
         id: check-react-19
         continue-on-error: true
-        uses: skills/action-keyphrase-checker@v2.0.0
-        with:
-          text-file: octofit-tracker/frontend/package.json
-          keyphrase: '"react": "^19'
-          minimum-occurrences: 1
-          case-sensitive: false
+        run: |
+          node -e "
+          try {
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('octofit-tracker/frontend/package.json','utf8'));
+            const v = pkg.dependencies && pkg.dependencies.react;
+            if (!v || !/^\\^?19(\\.|$)/.test(v)) {
+              console.error('react not at version ^19, found:', v);
+              process.exit(2);
+            }
+            console.log('react dependency OK:', v);
+          } catch (e) {
+            console.error('failed to read package.json', e.message);
+            process.exit(2);
+          }
+          "
+        shell: bash
+
+      - name: Dump frontend package.json (debug)
+        run: |
+          echo '--- frontend/package.json ---'
+          if [ -f octofit-tracker/frontend/package.json ]; then
+            sed -n '1,200p' octofit-tracker/frontend/package.json
+          else
+            echo 'MISSING: octofit-tracker/frontend/package.json'
+          fi
+        shell: bash
+        continue-on-error: true
 
       - name: Check Express dependency
         id: check-express
