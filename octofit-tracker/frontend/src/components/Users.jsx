@@ -2,6 +2,16 @@ import { useEffect, useState } from 'react'
 
 const ROUTE = 'users'
 const ENDPOINT_PATH = `/api/${ROUTE}/`
+const CODESPACE_NAME = import.meta.env.VITE_CODESPACE_NAME?.trim()
+const DEFAULT_API_HOST = 'http://localhost:8000'
+
+function createApiHost(overrideHost) {
+  if (overrideHost) return overrideHost
+  if (CODESPACE_NAME) {
+    return `https://${CODESPACE_NAME}-8000.app.github.dev`
+  }
+  return DEFAULT_API_HOST
+}
 
 function normalizeApiResponse(value) {
   if (Array.isArray(value)) return value
@@ -52,7 +62,7 @@ function Users({ apiHost }) {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const url = `${apiHost}${ENDPOINT_PATH}`
+  const url = `${createApiHost(apiHost)}${ENDPOINT_PATH}`
 
   useEffect(() => {
     let cancelled = false
